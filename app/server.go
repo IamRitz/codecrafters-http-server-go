@@ -73,7 +73,7 @@ func main() {
         uaEnd := strings.Index(strBuf[uaPos:], "\r")
         uaContent := strings.TrimSpace(strBuf[uaPos+len("User-Agent:"):uaPos+uaEnd])
         response = "HTTP/1.1 200 OK\r\n"
-        response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",uaEnd) + "\r\n\r\n"  + uaContent
+        response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(uaContent)) + "\r\n\r\n"  + uaContent
     }
 
     _, err = conn.Write([]byte(response))
