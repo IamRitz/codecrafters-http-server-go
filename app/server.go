@@ -46,10 +46,17 @@ func main() {
 
     reqStr = strings.TrimSpace(reqStr)
 
-    response := "HTTP/1.1 404 Not Found\r\n\r\n"
-    if reqStr == "/" {
-        response = "HTTP/1.1 200 OK\r\n\r\n"
-    }
+    randStart := strings.Index(reqStr[1:], "/")
+
+    randStr := reqStr[randStart+2:]
+    
+    fmt.Println(randStr)
+
+    response := "HTTP/1.1 200 OK\r\n"
+    response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(randStr)) + "\r\n\r\n"  + randStr
+
+    fmt.Println(response)
+
     _, err = conn.Write([]byte(response))
 
     if err != nil{
