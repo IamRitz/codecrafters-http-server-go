@@ -51,19 +51,26 @@ func main() {
     var randStr string
     var echoMsg string
 
-    if len(reqStr) != 1 {
+    response := "HTTP/1.1 404 Not Found\r\n\r\n"
+
+    if reqStr == "/" {
+        response = "HTTP/1.1 200 OK\r\n\r\n"
+    }else{
         randStart = strings.Index(reqStr[1:], "/")
         randStr = reqStr[randStart+2:]
         echoMsg = reqStr[1:randStart+1]
     }
-
-    response := "HTTP/1.1 404 Not Found\r\n\r\n"
 
     if reqStr == "/" {
         response = "HTTP/1.1 200 OK\r\n\r\n"
     }else if echoMsg == "echo"{
         response = "HTTP/1.1 200 OK\r\n"
         response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(randStr)) + "\r\n\r\n"  + randStr
+    }else if echoMsg == "user-agent"{
+        uaPos := strings.Index(strBuf, "User-Agent:")
+        uaContent := strings.TrimSpace(strBuf[uaPos+len("User-Agent:"):])
+        response = "HTTP/1.1 200 OK\r\n"
+        response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(strBuf)-uaPos) + "\r\n\r\n"  + uaContent
     }
 
     _, err = conn.Write([]byte(response))
