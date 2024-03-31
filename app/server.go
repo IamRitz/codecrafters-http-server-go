@@ -57,9 +57,11 @@ func main() {
         echoMsg = reqStr[1:randStart+1]
     }
 
-
     response := "HTTP/1.1 404 Not Found\r\n\r\n"
-    if echoMsg == "echo"{
+
+    if reqStr == "/" {
+        response = "HTTP/1.1 200 OK\r\n\r\n"
+    }else if echoMsg == "echo"{
         response = "HTTP/1.1 200 OK\r\n"
         response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(randStr)) + "\r\n\r\n"  + randStr
     }
