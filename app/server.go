@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-    conn := net.Conn
+    var conn net.Conn
 
     conn, err = l.Accept()
 	if err != nil {
