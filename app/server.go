@@ -55,10 +55,12 @@ func main() {
 
     if reqStr == "/" {
         response = "HTTP/1.1 200 OK\r\n\r\n"
-    }else{
+    }else if strings.HasPrefix(reqStr, "/echo"){
         randStart = strings.Index(reqStr[1:], "/")
         randStr = reqStr[randStart+2:]
         echoMsg = reqStr[1:randStart+1]
+    } else if strings.HasPrefix(reqStr, "/user-agent"){
+        echoMsg = "user-agent"
     }
 
     if reqStr == "/" {
