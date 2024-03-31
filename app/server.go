@@ -46,7 +46,7 @@ func main() {
 
     reqStr = strings.TrimSpace(reqStr)
 
-    response := "HTTP/1.1 400 Not Found\r\n\r\n"
+    response := "HTTP/1.1 404 Not Found\r\n\r\n"
     if reqStr == "/" {
         response = "HTTP/1.1 200 OK\r\n\r\n"
     }
