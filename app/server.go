@@ -50,12 +50,13 @@ func main() {
 
     randStr := reqStr[randStart+2:]
     
-    fmt.Println(randStr)
+    echoMsg := reqStr[1:randStart+1]
 
-    response := "HTTP/1.1 200 OK\r\n"
-    response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(randStr)) + "\r\n\r\n"  + randStr
-
-    fmt.Println(response)
+    response := "HTTP/1.1 404 Not Found\r\n\r\n"
+    if echoMsg == "echo"{
+        response = "HTTP/1.1 200 OK\r\n"
+        response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(randStr)) + "\r\n\r\n"  + randStr
+    }
 
     _, err = conn.Write([]byte(response))
 
