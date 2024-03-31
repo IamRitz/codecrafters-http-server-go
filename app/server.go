@@ -46,11 +46,17 @@ func main() {
 
     reqStr = strings.TrimSpace(reqStr)
 
-    randStart := strings.Index(reqStr[1:], "/")
 
-    randStr := reqStr[randStart+2:]
-    
-    echoMsg := reqStr[1:randStart+1]
+    var randStart int
+    var randStr string
+    var echoMsg string
+
+    if len(reqStr) != 1 {
+        randStart = strings.Index(reqStr[1:], "/")
+        randStr = reqStr[randStart+2:]
+        echoMsg = reqStr[1:randStart+1]
+    }
+
 
     response := "HTTP/1.1 404 Not Found\r\n\r\n"
     if echoMsg == "echo"{
