@@ -5,6 +5,7 @@ import (
 	// Uncomment this block to pass the first stage
 	"net"
 	"os"
+    "strings"
 )
 
 func main() {
@@ -35,7 +36,20 @@ func main() {
 		os.Exit(1)
     }
 
-    response := "HTTP/1.1 200 OK\r\n\r\n"
+    strBuf := string(buffer)
+
+    startGet := strings.Index(strBuf, "GET")
+    endGet := startGet + len("GET") - 1
+    startHttp := strings.Index(strBuf, "HTTP")
+
+    reqStr := strBuf[endGet+1:startHttp]
+
+    reqStr = strings.TrimSpace(reqStr)
+
+    response := "HTTP/1.1 400 Not Found\r\n\r\n"
+    if reqStr == "/" {
+        response = "HTTP/1.1 200 OK\r\n\r\n"
+    }
     _, err = conn.Write([]byte(response))
 
     if err != nil{
