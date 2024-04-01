@@ -6,9 +6,11 @@ import (
 	"net"
 	"os"
     "strings"
+    "flag"
+    "io/ioutil"
 )
 
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, dirPath string) {
 
     defer conn.Close()
 
@@ -45,6 +47,8 @@ func handleConnection(conn net.Conn) {
         echoMsg = reqStr[1:randStart+1]
     } else if strings.HasPrefix(reqStr, "/user-agent"){
         echoMsg = "user-agent"
+    } else if strings.HasPrefix(reqStr, "/files"){
+        echoMsg = "files"
     }
 
     if reqStr == "/" {
@@ -58,6 +62,30 @@ func handleConnection(conn net.Conn) {
         uaContent := strings.TrimSpace(strBuf[uaPos+len("User-Agent:"):uaPos+uaEnd])
         response = "HTTP/1.1 200 OK\r\n"
         response += "Content-Type: text/plain\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(uaContent)) + "\r\n\r\n"  + uaContent
+    } else if echoMsg == "files" {
+
+        filePos := strings.Index(reqStr, "/files") + len("/files/")
+        fileName := reqStr[filePos:]
+
+        files, err := os.ReadDir(dirPath)
+        if err != nil{
+            fmt.Printf("Error reading the path: ", err.Error())
+            os.Exit(1)
+        }
+
+        for _, file := range files{
+            if file.Name() == fileName{
+                fileContent, err := ioutil.ReadFile(dirPath + "/" + fileName)
+                if err != nil{
+                    fmt.Println("Error reading the file: ", err.Error())
+                    os.Exit(1)
+                }
+                fileContentStr := string(fileContent)
+                response = "HTTP/1.1 200 OK\r\n"
+                response += "Content-Type: application/octet-stream\r\n" + "Content-Length: " + fmt.Sprintf("%d",len(fileContentStr)) + "\r\n\r\n"  + fileContentStr
+                break
+            }
+        }
     }
 
     _, err = conn.Write([]byte(response))
@@ -71,6 +99,8 @@ func handleConnection(conn net.Conn) {
 func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Println("Logs from your program will appear here!")
+    dirPath := flag.String("directory", "", "directory for the file to be sent")
+	flag.Parse()
 
 	// Uncomment this block to pass the first stage
 
@@ -90,6 +120,6 @@ func main() {
             os.Exit(1)
         }
 
-        go handleConnection(conn)
+        go handleConnection(conn, *dirPath)
     }
 }
