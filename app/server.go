@@ -106,9 +106,15 @@ func handleConnection(conn net.Conn, dirPath string) {
         defer file.Close()
 
         bodyStart := strings.Index(strBuf, "\r\n\r\n")
+        bodyEnd := strings.Index(strBuf, "\x00")
 
-        data := strBuf[bodyStart+len("\r\n\r\n"):]
+        data := strBuf[bodyStart+len("\r\n\r\n"):bodyEnd]
 
+        // fmt.Println(bodyEnd)
+        // fmt.Println(data[bodyEnd:])
+        //
+        // fmt.Println("DATA LEN: ", len(data))
+        //
         _, err = file.Write([]byte(data))
 
         if err != nil {
